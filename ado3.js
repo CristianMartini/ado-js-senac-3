@@ -6,7 +6,7 @@
  * @return {string[]} Os nomes dos alunos que fizeram este exercício.
  */
 function nomesDosAlunos() {
-    return [ "João da Silva", "Maria da Silva" ];
+    return [ "Cristian Martini", "Claudio Souza Junior" ];
 }
 
 // EXERCÍCIO 1.
@@ -17,7 +17,10 @@ function nomesDosAlunos() {
  * @throws ConvertError Se o valor em graus não for um número finito.
  */
 function grausParaRadianos(graus) {
-    naoFizIssoAinda();
+    if (!isFinite(graus)|| isNaN(graus) || graus === "" || graus === null || graus === "0"){
+        throw new ConvertError('O valor de graus nao e um numero finito.')
+    }
+    return graus * Math.PI / 180;
 }
 
 // EXERCÍCIO 2.
@@ -28,8 +31,13 @@ function grausParaRadianos(graus) {
  * @throws ConvertError Se o valor em radianos não for um número finito.
  */
 function radianosParaGraus(radianos) {
-    naoFizIssoAinda();
-}
+    if (!isFinite(radianos) || isNaN(radianos)|| radianos === "0"|| radianos === null || radianos==="") {
+        throw new ConvertError(' O valor em radianos não é um número finito.');
+      }
+      
+      return radianos * 180 / Math.PI;
+    }
+
 
 // EXERCÍCIO 3.
 /**
@@ -44,8 +52,36 @@ function radianosParaGraus(radianos) {
  * @throw ConvertError Se o valor não for um número finito ou se qualquer uma das escalas for diferente de "C", "F" ou "K".
  */
 function converterTemperatura(valor, de, para) {
-    naoFizIssoAinda();
-}
+   
+    if (!Number.isFinite(valor)) {
+        throw new ConvertError("O valor deve ser um número finito.");
+      }
+    
+      
+      if (!["C", "F", "K"].includes(de) || !["C", "F", "K"].includes(para)) {
+        throw new ConvertError("As escalas devem ser 'C', 'F' ou 'K'.");
+      }
+    
+      
+      if (de === "K") {
+        valor = valor - 273.15;
+      } else if (de === "F") {
+        valor = (valor - 32) * (5 / 9);
+      }
+    
+     
+      if (para === "K") {
+        valor = valor + 273.15;
+      } else if (para === "F") {
+        valor = (valor * (9 / 5)) + 32;
+      }
+    
+      
+      valor = arredondar2Casas(valor);
+    
+      return valor;
+    }
+
 
 // EXERCÍCIO 4.
 /**
