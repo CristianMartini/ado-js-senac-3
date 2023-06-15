@@ -91,7 +91,17 @@ function converterTemperatura(valor, de, para) {
  * @throw ConvertError Se o parâmetro não for um número inteiro ou for menor que zero.
  */
 function fatorial(n) {
-    naoFizIssoAinda();
+    if (!Number.isInteger(n) || n < 0) {
+        throw new ConvertError("O parâmetro deve ser um número inteiro não negativo .");
+    }
+    
+    let resultado = 1n;
+    
+    for (let i = 2; i <= n; i++) {
+        resultado *= BigInt(i);
+    }
+    
+    return resultado;
 }
 
 // EXERCÍCIO 5.
@@ -108,7 +118,26 @@ function fatorial(n) {
  * @throw ConvertError Se o parâmetro não for um número inteiro ou for menor que zero.
  */
 function fibonacci(n) {
-    naoFizIssoAinda();
+    if (!Number.isInteger(n) || n < 0) {
+		throw new ConvertError('O parâmetro deve ser um número inteiro não negativo.');
+	}
+
+	let a = 0n;
+	let b = 1n;
+
+	if (n === 0) {
+		return a;
+	} else if (n === 1) {
+		return b;
+	}
+
+	for (let i = 2; i <= n; i++) {
+		let temp = a + b;
+		a = b;
+		b = temp;
+	}
+
+	return b;
 }
 
 // EXERCÍCIO 6.
@@ -120,9 +149,12 @@ function fibonacci(n) {
  * @throw ConvertError Se o parâmetro não for um número inteiro ou for menor que zero.
  */
 function triangular(n) {
-    naoFizIssoAinda();
+    if (typeof n !== 'bigint' || n < 0n) {
+		throw new ConvertError('O parâmetro deve ser um número inteiro não negativo.');
+	} else {
+		return (n * (n + 1n)) / 2n;
+	}
 }
-
 // EXERCÍCIO 7.
 /**
  * Retorne uma expressão regular que valide um CEP da seguinte forma:
@@ -131,8 +163,9 @@ function triangular(n) {
  * @return {RegExp} Uma expressão regular.
  */
 function cepRegex() {
-    naoFizIssoAinda();
+    return /^\d{5}-?\d{3}$/;
 }
+
 
 // EXERCÍCIO 8.
 /**
@@ -141,7 +174,7 @@ function cepRegex() {
  * @return {RegExp} Uma expressão regular.
  */
 function dddRegex() {
-    naoFizIssoAinda();
+    return /^(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])$/g;
 }
 
 // EXERCÍCIO 9.
@@ -154,8 +187,31 @@ function dddRegex() {
  * @throws PesquisaCepError Se o CEP não for encontrado.
  */
 async function pesquisarCep(cep) {
-    naoFizIssoAinda();
+    if (typeof cep !== "string" || !/^\d{5}-?\d{3}$/.test(cep)) {
+		throw new ConvertError('CEP inválido');
+	}
+
+	const url = `http://viacep.com.br/ws/${cep}/json/`;
+	const response = await fetch(url);
+
+	if (!response.ok) {
+		throw new ConvertError('CEP não encontrado');
+	}
+	
+	const data = await response.json();
+
+	if (data.erro) {
+		throw new PesquisaCepError('CEP não encontrado');
+	}
+
+	const logradouro = typeof data.logradouro === "string" ? data.logradouro : "";
+	const bairro = typeof data.bairro === "string" ? data.bairro : "";
+	const localidade = typeof data.localidade === "string" ? data.localidade : "";
+	const uf = typeof data.uf === "string" ? data.uf : "";
+
+	return new Endereco(logradouro, bairro, localidade, uf);
 }
+
 
 // EXERCÍCIO 10.
 /**
@@ -166,8 +222,18 @@ async function pesquisarCep(cep) {
  * algum erro na busca, coloque a mensagem de erro lá também (use o try-catch para isso).
  */
 async function pesquisarCepDOM() {
-    naoFizIssoAinda();
+    const cepInput = document.getElementById('cep');
+	const resultadoInput = document.getElementById('resultado-cep');
+
+	try {
+		const endereco = await pesquisarCep(cepInput.value);
+		const enderecoStr = `${endereco.logradouro} - ${endereco.bairro} - ${endereco.cidade} - ${endereco.uf}`;
+			resultadoInput.value = enderecoStr;
+	} catch (error) {
+		resultadoInput.value = error.message;
+	}
 }
+
 
 // EXERCÍCIO 11.
 /**
